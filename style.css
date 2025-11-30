@@ -1,0 +1,218 @@
+/* Custom Styles & Animations */
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #22d3ee;
+}
+
+/* Gradient Text */
+.text-gradient {
+    background: linear-gradient(to right, #ffffff, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Navigation Blur */
+.glass-nav {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glass Card Effect */
+.glass-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Desktop Nav Link Animation */
+.nav-link {
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #22d3ee;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Hamburger Animation */
+.hamburger-line {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.nav-active .line1 {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-active .line2 {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.nav-active .line3 {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile Menu Full Screen Overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    z-index: 40;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-col: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-menu-open {
+    transform: translateX(0);
+}
+
+/* Animation Classes for Scroll Observer */
+.hidden-el {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.show-el {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Input Autofill fix for dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+    -webkit-text-fill-color: white;
+    -webkit-box-shadow: 0 0 0px 1000px #1e293b inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Blob Animation for Background */
+.blob {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, rgba(15, 23, 42, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -1;
+    animation: float 10s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+/* Typing Cursor */
+.cursor {
+    display: inline-block;
+    width: 3px;
+    background-color: #22d3ee;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Skill Card Hover */
+.skill-card {
+    transition: all 0.3s ease;
+}
+
+.skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -10px rgba(34, 211, 238, 0.2);
+    border-color: rgba(34, 211, 238, 0.3);
+}
+
+.skill-card:hover i {
+    color: #22d3ee;
+    transform: scale(1.1);
+}
+
+/* Project Card Hover Effects */
+.project-card .overlay {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(8px);
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover .overlay {
+    transform: translateY(0);
+}
+
+.project-image {
+    transition: transform 0.7s ease;
+}
+
+.project-card:hover .project-image {
+    transform: scale(1.1);
+}
