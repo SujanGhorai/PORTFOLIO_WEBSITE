@@ -1,128 +1,180 @@
-
-// 1. Initialize EmailJS
-// IMPORTANT: You must replace 'YOUR_PUBLIC_KEY' with your actual EmailJS Public Key.
 (function () {
-    emailjs.init("YOUR_PUBLIC_KEY"); // <--- REPLACE THIS
+  emailjs.init("YOUR_PUBLIC_KEY");
 })();
 
-// 2. Typewriter Effect
 const words = ["Developer", "Designer", "Freelancer", "Creator"];
-let i = 0;
-let timer;
+let wordIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+const typewriter = document.getElementById("typewriter");
 
-function typeWriter() {
-    const heading = document.getElementById("typewriter");
-    const word = words[i];
-    let current = heading.innerText;
+function type() {
+  const currentWord = words[wordIndex];
 
-    if (current.length < word.length) {
-        heading.innerText = word.substring(0, current.length + 1);
-        timer = setTimeout(typeWriter, 100);
-    } else {
-        setTimeout(erase, 2000);
-    }
+  if (isDeleting) {
+    typewriter.textContent = currentWord.substring(0, charIndex - 1);
+    charIndex--;
+  } else {
+    typewriter.textContent = currentWord.substring(0, charIndex + 1);
+    charIndex++;
+  }
+
+  if (!isDeleting && charIndex === currentWord.length) {
+    isDeleting = true;
+    setTimeout(type, 2000);
+  } else if (isDeleting && charIndex === 0) {
+    isDeleting = false;
+    wordIndex = (wordIndex + 1) % words.length;
+    setTimeout(type, 500);
+  } else {
+    setTimeout(type, isDeleting ? 50 : 100);
+  }
 }
 
-function erase() {
-    const heading = document.getElementById("typewriter");
-    let current = heading.innerText;
-
-    if (current.length > 0) {
-        heading.innerText = current.substring(0, current.length - 1);
-        timer = setTimeout(erase, 50);
-    } else {
-        i = (i + 1) % words.length;
-        setTimeout(typeWriter, 500);
-    }
-}
-
-window.onload = () => {
-    typeWriter();
-    document.getElementById('year').innerText = new Date().getFullYear();
-};
-
-// 3. Scroll Reveal Animation (Intersection Observer)
 const observerOptions = {
-    threshold: 0.1
+  threshold: 0.1,
+  rootMargin: "0px 0px -50px 0px",
 };
 
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('show-el');
-        }
-    });
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("active");
+    }
+  });
 }, observerOptions);
 
-document.querySelectorAll('.hidden-el').forEach(el => observer.observe(el));
+document
+  .querySelectorAll(".fade-in, .slide-in-left, .slide-in-right")
+  .forEach((el) => {
+    observer.observe(el);
+  });
 
-// 4. Mobile Menu Logic
-const menuBtn = document.getElementById('menu-btn');
-const mobileMenu = document.getElementById('mobile-menu');
-const body = document.body;
-let isMenuOpen = false;
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+const closeMenu = document.getElementById("closeMenu");
+const mobileLinks = document.querySelectorAll(".mobile-link");
 
-menuBtn.addEventListener('click', () => {
-    isMenuOpen = !isMenuOpen;
-    if (isMenuOpen) {
-        mobileMenu.classList.add('mobile-menu-open');
-        menuBtn.classList.add('nav-active');
-        body.style.overflow = 'hidden'; // Lock scroll
-    } else {
-        mobileMenu.classList.remove('mobile-menu-open');
-        menuBtn.classList.remove('nav-active');
-        body.style.overflow = 'auto'; // Unlock scroll
+function openMobileMenu() {
+  hamburger.classList.add("active");
+  mobileMenu.classList.add("active");
+  document.body.classList.add("menu-open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMobileMenu() {
+  hamburger.classList.remove("active");
+  mobileMenu.classList.remove("active");
+  document.body.classList.remove("menu-open");
+  document.body.style.overflow = "auto";
+}
+
+hamburger.addEventListener("click", () => {
+  if (mobileMenu.classList.contains("active")) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+});
+
+closeMenu.addEventListener("click", closeMobileMenu);
+
+mobileLinks.forEach((link) => {
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute("href");
+    const targetSection = document.querySelector(targetId);
+
+    closeMobileMenu();
+
+    setTimeout(() => {
+      targetSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+  });
+});
+
+const navbar = document.querySelector(".navbar");
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 50) {
+    navbar.classList.add("scrolled");
+  } else {
+    navbar.classList.remove("scrolled");
+  }
+});
+
+document.getElementById("contactForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const btn = document.querySelector('#contactForm button[type="submit"]');
+  const btnText = document.getElementById("btnText");
+  const successMsg = document.getElementById("successMsg");
+  const errorMsg = document.getElementById("errorMsg");
+
+  btnText.textContent = "Sending...";
+  btn.disabled = true;
+  successMsg.classList.add("hidden");
+  errorMsg.classList.add("hidden");
+
+  emailjs.sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", this).then(
+    () => {
+      btnText.textContent = "Send Message";
+      btn.disabled = false;
+      successMsg.classList.remove("hidden");
+      errorMsg.classList.add("hidden");
+      this.reset();
+
+      setTimeout(() => {
+        successMsg.classList.add("hidden");
+      }, 5000);
+    },
+    () => {
+      btnText.textContent = "Send Message";
+      btn.disabled = false;
+      errorMsg.classList.remove("hidden");
+      successMsg.classList.add("hidden");
+
+      setTimeout(() => {
+        errorMsg.classList.add("hidden");
+      }, 5000);
     }
+  );
 });
 
-// Close mobile menu when clicking a link
-document.querySelectorAll('.mobile-link').forEach(link => {
-    link.addEventListener('click', () => {
-        isMenuOpen = false;
-        mobileMenu.classList.remove('mobile-menu-open');
-        menuBtn.classList.remove('nav-active');
-        body.style.overflow = 'auto';
-    });
+window.addEventListener("load", () => {
+  type();
+  document.getElementById("year").textContent = new Date().getFullYear();
 });
 
-// 5. Contact Form Handling with EmailJS
-document.getElementById('contact-form').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    const btn = document.getElementById('submit-btn');
-    const originalText = btn.innerHTML;
-    const successMsg = document.getElementById('success-msg');
-    const errorMsg = document.getElementById('error-msg');
-
-    // Set loading state
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    btn.disabled = true;
-    successMsg.classList.add('hidden');
-    errorMsg.classList.add('hidden');
-
-    // Send Email
-    // IMPORTANT: Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with actual EmailJS IDs
-    emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
-        .then(function () {
-            console.log('SUCCESS!');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            successMsg.classList.remove('hidden');
-            document.getElementById('contact-form').reset();
-        }, function (error) {
-            console.log('FAILED...', error);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            errorMsg.classList.remove('hidden');
-        });
-});
-
-// 6. Navbar Scroll Effect
-window.addEventListener('scroll', () => {
-    const nav = document.getElementById('navbar');
-    if (window.scrollY > 50) {
-        nav.classList.add('shadow-lg');
-    } else {
-        nav.classList.remove('shadow-lg');
+document
+  .querySelectorAll(".nav-link, .btn-primary, .btn-secondary")
+  .forEach((anchor) => {
+    if (
+      anchor.getAttribute("href") &&
+      anchor.getAttribute("href").startsWith("#")
+    ) {
+      anchor.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute("href");
+        const target = document.querySelector(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
     }
+  });
+
+document.addEventListener("click", (e) => {
+  if (
+    mobileMenu.classList.contains("active") &&
+    !mobileMenu.contains(e.target) &&
+    !hamburger.contains(e.target)
+  ) {
+    closeMobileMenu();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && mobileMenu.classList.contains("active")) {
+    closeMobileMenu();
+  }
 });
